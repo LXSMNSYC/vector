@@ -53,9 +53,8 @@ export class vec2 {
     }
     set length(v) {
         if (typeof v === "number") {
-            let len = this.length;
-            if (len > 0) {
-                len = v / len;
+            if (!this.isZero) {
+                let len = v / this.length;
                 this.x *= len;
                 this.y *= len;
             }
@@ -63,7 +62,9 @@ export class vec2 {
     }
     set scale(v) {
         if (typeof v === "number") {
-            this.length = this.length * v;
+            if (!this.isZero) {
+                this.length = this.length * v;
+            }
         }
     }
     get direction() {
@@ -128,10 +129,8 @@ export class vec2 {
         return new vec2(this.x, this.y);
     }
     negate() {
-        if (!this.isZero) {
-            this.x = -this.x;
-            this.y = -this.y;
-        }
+        this.x = -this.x;
+        this.y = -this.y;
         return this;
     }
     add(v) {
@@ -166,11 +165,21 @@ export class vec2 {
     }
     div(v) {
         if (v instanceof vec2) {
-            this.x *= v.x;
-            this.y *= v.y;
+            if (!this.isZero) {
+                if (!v.isZero) {
+                    this.x /= v.x;
+                    this.y /= v.y;
+                } else {
+                    this.x = this.y = 0;
+                }
+            }
         } else if (typeof v === "number") {
-            this.x *= v;
-            this.y *= v;
+            if (v != 0) {
+                this.x /= v;
+                this.y /= v;
+            } else {
+                this.x = this.y = 0;
+            }
         }
         return this;
     }
