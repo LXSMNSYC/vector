@@ -41,9 +41,13 @@ export class vec2 {
     }
     set length(v) {
         if (typeof v === "number") {
-            let rad = this.rad;
-            this.x = v * Math.cos(rad);
-            this.y = v * Math.sin(rad);
+            let len = this.length;
+			if(len > 0){
+				len = v/len;
+				this.x *= len;
+				this.y *= len;
+				this.z *= len;
+			}
         }
     }
     set scale(v) {
@@ -52,25 +56,30 @@ export class vec2 {
         }
     }
     get direction() {
-        let rad = this.rad;
-        return new vec2(Math.cos(rad), Math.sin(rad));
+		let len = this.length;
+		if(len != 1){
+			this.normalize();
+		}
+		let x = this.x;
+		let y = this.y;
+		if(len != 1){
+			this.length = len;
+		}
+        return new vec2(x, y);
     }
-    normal() {
-        let rad = this.rad;
-        this.x = Math.cos(rad);
-        this.y = Math.sin(rad);
+    normalize() {
+		this.length = 1;
         return this;
     }
     rotate(v) {
         let len = this.length;
-        let rad = this.rad;
         if (v instanceof vec2) {
-            rad = v.rad;
+            this.x = len * v.x;
+			this.y = len * v.y;
         } else if (typeof v === "number") {
-            rad = v;
+			this.x = len * Math.cos(v);
+			this.y = len * Math.sin(v);
         }
-        this.x = len * Math.cos(rad);
-        this.y = len * Math.sin(rad);
         return this;
     }
 
@@ -153,75 +162,44 @@ export class vec2 {
         }
     }
     static sum(v1, v2) {
-        if (arguments.length === 2) {
-            if (v1 instanceof vec2 && v2 instanceof vec2) {
-                return new vec2(v1.x + v2.x, v1.y + v2.y);
-            } else if (v1 instanceof vec2 && typeof v2 === "number") {
-                return new vec2(v1.x + v2, v1.y + v2);
-            } else if (v2 instanceof vec2 && typeof v1 === "number") {
-                return new vec2(v2.x + v1, v2.y + v1);
-            }
-        } else if (arguments.length === 1) {
-            if (v1 instanceof vec2) {
-                return new vec2(v1.x, v1.y);
-            } else if (typeof v1 === "number") {
-                return new vec2(v1, v1);
-            }
-        }
+		if (v1 instanceof vec2 && v2 instanceof vec2) {
+			return new vec2(v1.x + v2.x, v1.y + v2.y);
+		} else if (v1 instanceof vec2 && typeof v2 === "number") {
+			return new vec2(v1.x + v2, v1.y + v2);
+		} else if (v2 instanceof vec2 && typeof v1 === "number") {
+			return new vec2(v2.x + v1, v2.y + v1);
+		}
         return new vec2(0, 0);
     }
     static diff(v1, v2) {
-        if (arguments.length === 2) {
-            if (v1 instanceof vec2 && v2 instanceof vec2) {
-                return new vec2(v1.x - v2.x, v1.y - v2.y);
-            } else if (v1 instanceof vec2 && typeof v2 === "number") {
-                return new vec2(v1.x - v2, v1.y - v2);
-            } else if (v2 instanceof vec2 && typeof v1 === "number") {
-                return new vec2(v2.x - v1, v2.y - v1);
-            }
-        } else if (arguments.length === 1) {
-            if (v1 instanceof vec2) {
-                return new vec2(v1.x, v1.y);
-            } else if (typeof v1 === "number") {
-                return new vec2(v1, v1);
-            }
-        }
+		if (v1 instanceof vec2 && v2 instanceof vec2) {
+			return new vec2(v1.x - v2.x, v1.y - v2.y);
+		} else if (v1 instanceof vec2 && typeof v2 === "number") {
+			return new vec2(v1.x - v2, v1.y - v2);
+		} else if (v2 instanceof vec2 && typeof v1 === "number") {
+			return new vec2(v2.x - v1, v2.y - v1);
+		}
+        
         return new vec2(0, 0);
     }
     static prod(v1, v2) {
-        if (arguments.length === 2) {
-            if (v1 instanceof vec2 && v2 instanceof vec2) {
-                return new vec2(v1.x * v2.x, v1.y * v2.y);
-            } else if (v1 instanceof vec2 && typeof v2 === "number") {
-                return new vec2(v1.x * v2, v1.y * v2);
-            } else if (v2 instanceof vec2 && typeof v1 === "number") {
-                return new vec2(v2.x * v1, v2.y * v1);
-            }
-        } else if (arguments.length === 1) {
-            if (v1 instanceof vec2) {
-                return new vec2(v1.x, v1.y);
-            } else if (typeof v1 === "number") {
-                return new vec2(v1, v1);
-            }
-        }
+		if (v1 instanceof vec2 && v2 instanceof vec2) {
+			return new vec2(v1.x * v2.x, v1.y * v2.y);
+		} else if (v1 instanceof vec2 && typeof v2 === "number") {
+			return new vec2(v1.x * v2, v1.y * v2);
+		} else if (v2 instanceof vec2 && typeof v1 === "number") {
+			return new vec2(v2.x * v1, v2.y * v1);
+		}
         return new vec2(0, 0);
     }
     static quot(v1, v2) {
-        if (arguments.length === 2) {
-            if (v1 instanceof vec2 && v2 instanceof vec2) {
-                return new vec2(v1.x / v2.x, v1.y / v2.y);
-            } else if (v1 instanceof vec2 && typeof v2 === "number") {
-                return new vec2(v1.x / v2, v1.y / v2);
-            } else if (v2 instanceof vec2 && typeof v1 === "number") {
-                return new vec2(v2.x / v1, v2.y / v1);
-            }
-        } else if (arguments.length === 1) {
-            if (v1 instanceof vec2) {
-                return new vec2(v1.x, v1.y);
-            } else if (typeof v1 === "number") {
-                return new vec2(v1, v1);
-            }
-        }
+		if (v1 instanceof vec2 && v2 instanceof vec2) {
+			return new vec2(v1.x / v2.x, v1.y / v2.y);
+		} else if (v1 instanceof vec2 && typeof v2 === "number") {
+			return new vec2(v1.x / v2, v1.y / v2);
+		} else if (v2 instanceof vec2 && typeof v1 === "number") {
+			return new vec2(v2.x / v1, v2.y / v1);
+		}
         return new vec2(0, 0);
     }
     angleTo(v) {
@@ -260,10 +238,12 @@ export class vec2 {
         if (v instanceof vec2) {
             let len = this.len;
             if (typeof rad !== "number") {
-                rad = this.rad;
-            }
-            this.x = v.x + len * Math.cos(rad);
-            this.y = v.y + len * Math.sin(rad);
+				this.x = v.x + len * Math.cos(rad);
+				this.y = v.y + len * Math.sin(rad);
+            } else if (rad instanceof vec2){
+				this.x = v.x + len * rad.x;
+				this.y = v.y + len * rad.y;
+			}
         }
         return this;
     }
