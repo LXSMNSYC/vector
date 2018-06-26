@@ -1,3 +1,9 @@
+import { vec2 } from "./vec2.js";
+
+function lerp(a, b, t) {
+    return a + (b - a) * t;
+}
+
 export class vec3 {
     constructor(x, y, z) {
         /*
@@ -26,7 +32,7 @@ export class vec3 {
             this.x = x.x;
             this.y = x.y;
             this.z = y;
-        } else if (x instanceof vec3) {
+        } else if (x instanceof vec3 || x instanceof vec4) {
             this.x = x.x;
             this.y = x.y;
             this.z = x.z;
@@ -36,58 +42,60 @@ export class vec3 {
             this.z = x;
         }
     }
+    get isZero() {
+        return this.x == 0 && this.y == 0 && this.z == 0;
+    }
     get length2() {
+        if (this.isZero) {
+            return 0;
+        }
         return this.x * this.x + this.y * this.y + this.z * this.z;
     }
-    get length2XY() {
-        return this.x * this.x + this.y * this.y;
-    }
-    get length2XZ() {
-        return this.x * this.x + this.z * this.z;
-    }
-    get length2YZ() {
-        return this.y * this.y + this.z * this.z;
-    }
     get length() {
+        if (this.isZero) {
+            return 0;
+        }
         return Math.sqrt(this.length2);
     }
-    get lengthXY() {
-        return Math.sqrt(this.length2XY);
+    get angleZ() {
+        if (this.isZero) {
+            return undefined;
+        }
+        return Math.atan2(this.z, this.xy.length);
     }
-    get lengthXZ() {
-        return Math.sqrt(this.length2XZ);
+    get angleY() {
+        if (this.isZero) {
+            return undefined;
+        }
+        return Math.atan2(this.y, this.xz.length);
     }
-    get lengthYZ() {
-        return Math.sqrt(this.length2YZ);
+    get angleX() {
+        if (this.isZero) {
+            return undefined;
+        }
+        return Math.atan2(this.x, this.yz.length);
     }
-    get radXY() {
-        return Math.atan2(this.y, this.x);
+    set length(v) {
+        if (typeof v === "number") {
+            if (!this.isZero) {
+                let len = v / this.length;
+                this.x *= len;
+                this.y *= len;
+                this.z *= len;
+            }
+        }
     }
-    get radXZ() {
-        return Math.atan2(this.z, this.x);
+    set scale(v) {
+        if (typeof v === "number") {
+            if (!this.isZero) {
+                this.length = this.length * v;
+            }
+        }
     }
-    get radYZ() {
-        return Math.atan2(this.z, this.x);
+    normalize() {
+        this.length = 1;
+        return this;
     }
-    get radYX() {
-        return Math.atan2(this.x, this.y);
-    }
-    get radZX() {
-        return Math.atan2(this.x, this.z);
-    }
-    get radZY() {
-        return Math.atan2(this.y, this.z);
-    }
-    get radZ() {
-        return Math.atan2(this.z, this.lengthXY);
-    }
-    get radY() {
-        return Math.atan2(this.y, this.lengthXZ);
-    }
-    get radX() {
-        return Math.atan2(this.x, this.lengthYZ);
-    }
-
     negate() {
         this.x = -this.x;
         this.y = -this.y;
@@ -141,28 +149,45 @@ export class vec3 {
     }
     div(v) {
         if (v instanceof vec3) {
-            this.x /= v.x;
-            this.y /= v.y;
-            this.z /= v.z;
+            if (!v.isZero) {
+                if (v.x != 0) {
+                    this.x /= v.x;
+                }
+                if (v.y != 0) {
+                    this.y /= v.y;
+                }
+                if (v.z != 0) {
+                    this.z /= v.z;
+                }
+            } else {
+                this.x = this.y = this.z = 0;
+            }
         } else if (v instanceof vec2) {
-            this.x /= v.x;
-            this.y /= v.y;
+            if (!v.isZero) {
+                this.x /= v.x;
+                this.y /= v.y;
+            } else {
+                this.x = this.y = this.z = 0;
+            }
         } else if (typeof v === "number") {
-            this.x /= v;
-            this.y /= v;
-            this.z /= v;
+            if (v != 0) {
+                this.x /= v;
+                this.y /= v;
+                this.z /= v;
+            } else {
+                this.x = this.y = this.z = 0;
+            }
         }
         return this;
     }
-
     dot(v) {
         if (v instanceof vec3) {
             return this.x * v.x + this.y * v.y + this.z * v.z;
         } else if (v instanceof vec2) {
             return this.x * v.x + this.y * v.y;
         }
+        return 0;
     }
-
     cross(v) {
         if (v instanceof vec3) {
             let crossx = this.y * v.z - this.z * v.y;
@@ -170,218 +195,85 @@ export class vec3 {
             let crossz = this.x * v.y - this.y * v.x;
             return new vec3(crossx, crossy, crossz);
         }
+        return undefined
     }
-    get xx() {
-        return new vec2(this.x, this.x);
+
+    mix(v, t) {
+        if (v instanceof vec3 && t === "number") {
+            return new vec3(lerp(this.x, v.x, t), lerp(this.y, v.y, t), lerp(this.z, v.z, t));
+        }
+        return 0;
     }
-    get xy() {
-        return new vec2(this.x, this.y);
+    get direction() {
+        if (this.isZero) {
+            return undefined;
+        }
+        let len = this.length;
+        if (len != 1) {
+            this.normalize();
+        }
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+        if (len != 1) {
+            this.length = len;
+        }
+        return new vec3(x, y, z);
     }
-    get xz() {
-        return new vec2(this.x, this.z);
+
+    static sum(v1, v2) {
+        if (v1 instanceof vec3 && v2 instanceof vec3) {
+            return new vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+        } else if (v1 instanceof vec3 && typeof v2 === "number") {
+            return new vec3(v1.x + v2, v1.y + v2, v1.z + v2);
+        } else if (v2 instanceof vec3 && typeof v1 === "number") {
+            return new vec3(v2.x + v1, v2.y + v1, v2.z + v1);
+        }
+        return new vec3(0, 0, 0);
     }
-    get yx() {
-        return new vec2(this.y, this.x);
+
+    static diff(v1, v2) {
+        if (v1 instanceof vec3 && v2 instanceof vec3) {
+            return new vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+        } else if (v1 instanceof vec3 && typeof v2 === "number") {
+            return new vec3(v1.x - v2, v1.y - v2, v1.z - v2);
+        } else if (v2 instanceof vec3 && typeof v1 === "number") {
+            return new vec3(v2.x - v1, v2.y - v1, v2.z - v1);
+        }
+        return new vec3(0, 0, 0);
     }
-    get yy() {
-        return new vec2(this.y, this.y);
+
+    static prod(v1, v2) {
+        if (v1 instanceof vec3 && v2 instanceof vec3) {
+            return new vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+        } else if (v1 instanceof vec3 && typeof v2 === "number") {
+            return new vec3(v1.x * v2, v1.y * v2, v1.z * v2);
+        } else if (v2 instanceof vec3 && typeof v1 === "number") {
+            return new vec3(v2.x * v1, v2.y * v1, v2.z * v1);
+        }
+        return new vec3(0, 0, 0);
     }
-    get yz() {
-        return new vec2(this.y, this.z);
+
+    static quot(v1, v2) {
+        if (v1 instanceof vec3 && v2 instanceof vec3) {
+            return new vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);
+        } else if (v1 instanceof vec3 && typeof v2 === "number") {
+            return new vec3(v1.x / v2, v1.y / v2, v1.z / v2);
+        } else if (v2 instanceof vec3 && typeof v1 === "number") {
+            return new vec3(v2.x / v1, v2.y / v1, v2.z / v1);
+        }
+        return new vec3(0, 0, 0);
     }
-    get zx() {
-        return new vec2(this.z, this.x);
-    }
-    get zy() {
-        return new vec2(this.z, this.y);
-    }
-    get zz() {
-        return new vec2(this.z, this.z);
-    }
-    get xxx() {
-        return new vec3(this.x, this.x, this.x);
-    }
-    get xxy() {
-        return new vec3(this.x, this.x, this.y);
-    }
-    get xxz() {
-        return new vec3(this.x, this.x, this.z);
-    }
-    get xyx() {
-        return new vec3(this.x, this.y, this.x);
-    }
-    get xyy() {
-        return new vec3(this.x, this.y, this.y);
-    }
-    get xyz() {
+
+    get clone() {
         return new vec3(this.x, this.y, this.z);
     }
-    get xzx() {
-        return new vec3(this.x, this.z, this.x);
-    }
-    get xzy() {
-        return new vec3(this.x, this.z, this.y);
-    }
-    get xzz() {
-        return new vec3(this.x, this.z, this.z);
-    }
-    get yxx() {
-        return new vec3(this.y, this.x, this.x);
-    }
-    get yxy() {
-        return new vec3(this.y, this.x, this.y);
-    }
-    get yxz() {
-        return new vec3(this.y, this.x, this.z);
-    }
-    get yyx() {
-        return new vec3(this.y, this.y, this.x);
-    }
-    get yyy() {
-        return new vec3(this.y, this.y, this.y);
-    }
-    get yyz() {
-        return new vec3(this.y, this.y, this.z);
-    }
-    get yzx() {
-        return new vec3(this.y, this.z, this.x);
-    }
-    get yzy() {
-        return new vec3(this.y, this.z, this.y);
-    }
-    get yzz() {
-        return new vec3(this.y, this.z, this.z);
-    }
-    get zxx() {
-        return new vec3(this.z, this.x, this.x);
-    }
-    get zxy() {
-        return new vec3(this.z, this.x, this.y);
-    }
-    get zxz() {
-        return new vec3(this.z, this.x, this.z);
-    }
-    get zyx() {
-        return new vec3(this.z, this.y, this.x);
-    }
-    get zyy() {
-        return new vec3(this.z, this.y, this.y);
-    }
-    get zyz() {
-        return new vec3(this.z, this.y, this.z);
-    }
-    get zzx() {
-        return new vec3(this.z, this.z, this.x);
-    }
-    get zzy() {
-        return new vec3(this.z, this.z, this.y);
-    }
-    get zzz() {
-        return new vec3(this.z, this.z, this.z);
-    }
 
-    set xy(v2) {
-        if (v2 instanceof vec3 || v2 instanceof vec2) {
-            this.x = v2.x;
-            this.y = v2.y;
-        } else if (typeof v2 === "number") {
-            this.x = v2;
-            this.y = v2;
-        }
-    }
-    set yx(v2) {
-        if (v2 instanceof vec3 || v2 instanceof vec2) {
-            this.y = v2.x;
-            this.x = v2.y;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = v2;
-        }
-    }
-    set xz(v2) {
-        if (v2 instanceof vec3 || v2 instanceof vec2) {
-            this.x = v2.x;
-            this.z = v2.y;
-        } else if (typeof v2 === "number") {
-            this.x = this.z = v2;
-        }
-    }
-    set zx(v2) {
-        if (v2 instanceof vec3 || v2 instanceof vec2) {
-            this.z = v2.x;
-            this.x = v2.y;
-        } else if (typeof v2 === "number") {
-            this.z = this.x = v2;
-        }
-    }
-    set yz(v2) {
-        if (v2 instanceof vec3 || v2 instanceof vec2) {
-            this.y = v2.x;
-            this.z = v2.y;
-        } else if (typeof v2 === "number") {
-            this.y = this.z = v2;
-        }
-    }
-    set zy(v2) {
-        if (v2 instanceof vec3 || v2 instanceof vec2) {
-            this.z = v2.x;
-            this.y = v2.y;
-        } else if (typeof v2 === "number") {
-            this.z = this.y = v2;
-        }
-    }
-    set xyz(v2) {
-        if (v2 instanceof vec3) {
-            this.x = v2.x;
-            this.y = v2.y;
-            this.z = v2.z;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = this.z = v2;
-        }
-    }
-    set xzy(v2) {
-        if (v2 instanceof vec3) {
-            this.x = v2.x;
-            this.z = v2.y;
-            this.y = v2.z;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = this.z = v2;
-        }
-    }
-    set yxz(v2) {
-        if (v2 instanceof vec3) {
-            this.y = v2.x;
-            this.x = v2.y;
-            this.z = v2.z;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = this.z = v2;
-        }
-    }
-    set yzx(v2) {
-        if (v2 instanceof vec3) {
-            this.y = v2.x;
-            this.z = v2.y;
-            this.x = v2.z;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = this.z = v2;
-        }
-    }
-    set zxy(v2) {
-        if (v2 instanceof vec3) {
-            this.z = v2.x;
-            this.x = v2.y;
-            this.y = v2.z;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = this.z = v2;
-        }
-    }
-
-    set zyx(v2) {
-        if (v2 instanceof vec3) {
-            this.x = v2.x;
-            this.y = v2.y;
-            this.x = v2.z;
-        } else if (typeof v2 === "number") {
-            this.x = this.y = this.z = v2;
+    set assign(v) {
+        if (v instanceof vec3) {
+            this.x = v.x;
+            this.y = v.y;
+            this.z = v.z;
         }
     }
 }

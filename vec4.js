@@ -1,3 +1,5 @@
+import { vec2 } from "./vec2.js";
+import { vec3 } from "./vec3.js";
 export class vec4 {
     /*
      *
@@ -67,199 +69,16 @@ export class vec4 {
             this.x = this.y = this.z = this.w = 0;
         }
     }
-    get xx() {
-        return new vec2(this.x, this.x);
-    }
-    get xy() {
-        return new vec2(this.x, this.y);
-    }
-    get xz() {
-        return new vec2(this.x, this.z);
-    }
-    get xw() {
-        return new vec2(this.x, this.w);
-    }
-    get yx() {
-        return new vec2(this.y, this.x);
-    }
-    get yy() {
-        return new vec2(this.y, this.y);
-    }
-    get yz() {
-        return new vec2(this.y, this.z);
-    }
-    get yw() {
-        return new vec2(this.y, this.w);
-    }
-    get zx() {
-        return new vec2(this.z, this.x);
-    }
-    get zy() {
-        return new vec2(this.z, this.y);
-    }
-    get zz() {
-        return new vec2(this.z, this.z);
-    }
-    get zw() {
-        return new vec2(this.z, this.w);
-    }
-    get wx() {
-        return new vec2(this.w, this.x);
-    }
-    get wy() {
-        return new vec2(this.w, this.y);
-    }
-    get wz() {
-        return new vec2(this.w, this.z);
-    }
-    get ww() {
-        return new vec2(this.w, this.w);
-    }
 
-    get xxx() {
-        return new vec3(this.x, this.x, this.x);
+    get clone() {
+        return new vec4(this.x, this.y, this.z, this.w);
     }
-    get xxy() {
-        return new vec3(this.x, this.x, this.y);
-    }
-    get xxz() {
-        return new vec3(this.x, this.x, this.z);
-    }
-    get xxw() {
-        return new vec3(this.x, this.x, this.w);
-    }
-    get xyx() {
-        return new vec3(this.x, this.y, this.x);
-    }
-    get xyy() {
-        return new vec3(this.x, this.y, this.y);
-    }
-    get xyz() {
-        return new vec3(this.x, this.y, this.z);
-    }
-    get xyw() {
-        return new vec3(this.x, this.y, this.w);
-    }
-    get xzx() {
-        return new vec3(this.x, this.z, this.x);
-    }
-    get xzy() {
-        return new vec3(this.x, this.z, this.y);
-    }
-    get xzz() {
-        return new vec3(this.x, this.z, this.z);
-    }
-    get xzw() {
-        return new vec3(this.x, this.z, this.w);
-    }
-    get xwx() {
-        return new vec3(this.x, this.w, this.x);
-    }
-    get xwy() {
-        return new vec3(this.x, this.w, this.y);
-    }
-    get xwz() {
-        return new vec3(this.x, this.w, this.z);
-    }
-    get xww() {
-        return new vec3(this.x, this.w, this.w);
-    }
-
-    get yxx() {
-        return new vec3(this.y, this.x, this.x);
-    }
-    get yxy() {
-        return new vec3(this.y, this.x, this.y);
-    }
-    get yxz() {
-        return new vec3(this.y, this.x, this.z);
-    }
-    get yxw() {
-        return new vec3(this.y, this.x, this.w);
-    }
-    get yyx() {
-        return new vec3(this.y, this.y, this.x);
-    }
-    get yyy() {
-        return new vec3(this.y, this.y, this.y);
-    }
-    get yyz() {
-        return new vec3(this.y, this.y, this.z);
-    }
-    get yyw() {
-        return new vec3(this.y, this.y, this.w);
-    }
-    get yzx() {
-        return new vec3(this.y, this.z, this.x);
-    }
-    get yzy() {
-        return new vec3(this.y, this.z, this.y);
-    }
-    get yzz() {
-        return new vec3(this.y, this.z, this.z);
-    }
-    get yzw() {
-        return new vec3(this.y, this.z, this.w);
-    }
-    get ywx() {
-        return new vec3(this.y, this.w, this.x);
-    }
-    get ywy() {
-        return new vec3(this.y, this.w, this.y);
-    }
-    get ywz() {
-        return new vec3(this.y, this.w, this.z);
-    }
-    get yww() {
-        return new vec3(this.y, this.w, this.w);
-    }
-
-    get zxx() {
-        return new vec3(this.z, this.x, this.x);
-    }
-    get zxy() {
-        return new vec3(this.z, this.x, this.y);
-    }
-    get zxz() {
-        return new vec3(this.z, this.x, this.z);
-    }
-    get zxw() {
-        return new vec3(this.z, this.x, this.w);
-    }
-    get zyx() {
-        return new vec3(this.z, this.y, this.x);
-    }
-    get zyy() {
-        return new vec3(this.z, this.y, this.y);
-    }
-    get zyz() {
-        return new vec3(this.z, this.y, this.z);
-    }
-    get zyw() {
-        return new vec3(this.z, this.y, this.w);
-    }
-    get zzx() {
-        return new vec3(this.z, this.z, this.x);
-    }
-    get zzy() {
-        return new vec3(this.z, this.z, this.y);
-    }
-    get zzz() {
-        return new vec3(this.z, this.z, this.z);
-    }
-    get zzw() {
-        return new vec3(this.z, this.z, this.w);
-    }
-    get zwx() {
-        return new vec3(this.z, this.w, this.x);
-    }
-    get zwy() {
-        return new vec3(this.z, this.w, this.y);
-    }
-    get zwz() {
-        return new vec3(this.z, this.w, this.z);
-    }
-    get zww() {
-        return new vec3(this.z, this.w, this.w);
+    set assign(v) {
+        if (v instanceof vec4) {
+            this.x = v.x;
+            this.y = v.y;
+            this.z = v.z;
+            this.w = v.w;
+        }
     }
 }

@@ -1,5 +1,6 @@
-const rad2deg = 57.295779513082320;
-
+function lerp(a, b, t) {
+    return a + (b - a) * t;
+}
 export class vec2 {
     /*
      *
@@ -19,7 +20,7 @@ export class vec2 {
         if (typeof x === "number" && typeof y === "number") {
             this.x = x;
             this.y = y;
-        } else if (x instanceof vec2) {
+        } else if (x instanceof vec2 || x instanceof vec3 || x instanceof vec4) {
             this.x = x.x;
             this.y = x.y;
         } else if (typeof x === "number") {
@@ -28,7 +29,6 @@ export class vec2 {
             this.x = this.y = 0;
         }
     }
-
     get isZero() {
         return this.x == 0 && this.y == 0
     }
@@ -45,11 +45,11 @@ export class vec2 {
         }
         return Math.sqrt(this.length2);
     }
-    get rad() {
+    get angle() {
         if (this.isZero) {
             return undefined;
         }
-        return atan2(this.y, this.x);
+        return Math.atan2(this.y, this.x);
     }
     set length(v) {
         if (typeof v === "number") {
@@ -67,21 +67,6 @@ export class vec2 {
             }
         }
     }
-    get direction() {
-        if (this.isZero) {
-            return undefined;
-        }
-        let len = this.length;
-        if (len != 1) {
-            this.normalize();
-        }
-        let x = this.x;
-        let y = this.y;
-        if (len != 1) {
-            this.length = len;
-        }
-        return new vec2(x, y);
-    }
     normalize() {
         this.length = 1;
         return this;
@@ -90,8 +75,15 @@ export class vec2 {
         let len = this.length;
         if (v instanceof vec2) {
             if (!this.isZero) {
+                let len2 = v.length;
+                if (len2 != 1) {
+                    v.normalize();
+                }
                 this.x = len * v.x;
                 this.y = len * v.y;
+                if (len2 != 1) {
+                    v.length = len2;
+                }
             }
         } else if (typeof v === "number") {
             this.x = len * Math.cos(v);
@@ -100,34 +92,6 @@ export class vec2 {
         return this;
     }
 
-    set xy(v) {
-        if (v instanceof vec2) {
-            this.x = v.x;
-            this.y = v.y;
-        } else if (typeof v === "number") {
-            this.x = this.y = v;
-        }
-    }
-    set yx(v) {
-        if (v instanceof vec2) {
-            this.x = v.y;
-            this.y = v.x;
-        } else if (typeof v === "number") {
-            this.x = this.y = v;
-        }
-    }
-    get xx() {
-        return new vec2(this.x, this.x);
-    }
-    get yy() {
-        return new vec2(this.y, this.y);
-    }
-    get yx() {
-        return new vec2(this.y, this.x);
-    }
-    get xy() {
-        return new vec2(this.x, this.y);
-    }
     negate() {
         this.x = -this.x;
         this.y = -this.y;
@@ -187,6 +151,31 @@ export class vec2 {
         if (v instanceof vec2) {
             return this.x * v.x + this.y * v.y
         }
+        return 0;
+    }
+    mix(v, t) {
+        if (v instanceof vec2 && typeof t === "number") {
+            return new vec2(lerp(this.x, v.x, t), lerp(this.y, v.y, t));
+        }
+        return new vec2(0, 0);
+    }
+    static mix(v1, v2, t) {
+        return v1.mix(v2, t);
+    }
+    direction() {
+        if (this.isZero) {
+            return undefined;
+        }
+        let len = this.length;
+        if (len != 1) {
+            this.normalize();
+        }
+        let x = this.x;
+        let y = this.y;
+        if (len != 1) {
+            this.length = len;
+        }
+        return new vec2(x, y);
     }
     static sum(v1, v2) {
         if (v1 instanceof vec2 && v2 instanceof vec2) {
@@ -289,6 +278,7 @@ export class vec2 {
                 this.x = v.x + len * Math.cos(rad);
                 this.y = v.y + len * Math.sin(rad);
             } else if (rad instanceof vec2) {
+                rad = rad.direction;
                 this.x = v.x + len * rad.x;
                 this.y = v.y + len * rad.y;
             }
@@ -307,4 +297,13 @@ export class vec2 {
         return [this.x, this.y];
     }
 
+    get clone() {
+        return new vec2(this.x, this.y);
+    }
+    set assign(v) {
+        if (v instanceof vec2) {
+            this.x = v.x;
+            this.y = v.y;
+        }
+    }
 }
