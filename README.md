@@ -4,32 +4,32 @@ Vector Math for ES6.
 ### Description
 ### Installation
 ### Usage
-####Importing
-####Example
-####Overloading
-####Chaining
+#### Importing
+#### Example
+#### Overloading
+#### Chaining
 ### API
 #### vec2
-#####The vec2 constructor has 4 overloads:
+##### The vec2 constructor has 4 overloads:
 ```js
 let v = new vec2(x, y); // x and y are coordinates
 let v = new vec2(vector); // copies the passed vector's coordinates
 let v = new vec2(value); // value is assigned to both x and y properties
 let v = new vec2(); // creates a zero vector
 ```
-#####vec2 getters
+##### vec2 getters
 ```js
 v.isZero; // checks if the vector is a zero vector
 v.length2; // gets the squared magnitude/length of the vector.
 v.length; // gets the magnitude/length of the vector.
 v.angle; // gets the angle (in radians)
 ```
-#####vec2 setters
+##### vec2 setters
 ```js
 v.length = value; //sets the magnitude/length of the vector
 v.scale = factor; //scales(multiplies) the magnitude of the vector.
 ```
-#####vec2 arithmetics
+##### vec2 operations
 ```js
 v.negate(); // negates (flips) a vector
 v.add(v2); // adds v2 to v
@@ -43,7 +43,7 @@ v.div(value); // divides v by value
 v.dot(v2); // dot product of a vector
 ```
 
-#####vec2 factory
+##### vec2 factory
 the following methods produces a new vector
 ```js
 v.mix(v2, t); // applies the mix (lerp) method. 
@@ -62,7 +62,7 @@ vec2.quot(v1, value); // v1.x/value, v1.y/value
 vec2.quot(value, v2); // value/v2.x, value/v2.y
 v.clone(); // clones vector
 ```
-#####other vec2 methods
+##### other vec2 methods
 ```js
 v.angleTo(v2); // the angle from a vector to another vector (in radians).
 v.directionTo(v2); // gets the direction vector (normalized difference) from v towards v2;
