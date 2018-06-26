@@ -8,6 +8,19 @@ Vector Math for ES6.
 #### Example
 #### Overloading
 #### Chaining
+Vector supports chaining on the following methods:
+```js
+let v = new vec2(1, 2)
+        .assign(v2)
+        .negate()
+        .add(v2)
+        .sub(v2)
+        .mul(v2)
+        .div(v2)
+        .normalize()
+        .rotate(Math.PI)
+        .rotateOn(v2, Math.PI);
+```
 ### API
 #### vec2
 ##### The vec2 constructor has 4 overloads:
