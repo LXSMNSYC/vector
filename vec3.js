@@ -61,19 +61,19 @@ export class vec3 {
         if (this.isZero) {
             return undefined;
         }
-        return Math.atan2(this.z, this.xy.length);
+        return Math.acos(this.z / this.length);
     }
     get angleY() {
         if (this.isZero) {
             return undefined;
         }
-        return Math.atan2(this.y, this.xz.length);
+        return Math.acos(this.y / this.length);
     }
     get angleX() {
         if (this.isZero) {
             return undefined;
         }
-        return Math.atan2(this.x, this.yz.length);
+        return Math.acos(this.x / this.length);
     }
     set length(v) {
         if (typeof v === "number") {
@@ -94,6 +94,28 @@ export class vec3 {
     }
     normalize() {
         this.length = 1;
+        return this;
+    }
+    rotateZ(v) {
+        let len = this.length;
+        let angleZ = this.angleZ;
+        if (v instanceof vec2) {
+            if (!this.isZero) {
+                let len2 = v.length;
+                if (len2 != 1) {
+                    v.normalize();
+                }
+                this.x = len * v.x;
+                this.y = len * v.y;
+                if (len2 != 1) {
+                    v.length = len2;
+                }
+            }
+        } else if (typeof v === "number") {
+            this.x = len * Math.cos(v) * Math.sin(angleZ);
+            this.y = len * Math.sin(v) * Math.sin(angleZ);
+            this.z = len * Math.cos(angleZ);
+        }
         return this;
     }
     negate() {
@@ -197,7 +219,6 @@ export class vec3 {
         }
         return undefined
     }
-
     mix(v, t) {
         if (v instanceof vec3 && t === "number") {
             return new vec3(lerp(this.x, v.x, t), lerp(this.y, v.y, t), lerp(this.z, v.z, t));
@@ -264,16 +285,23 @@ export class vec3 {
         }
         return new vec3(0, 0, 0);
     }
-
-    get clone() {
-        return new vec3(this.x, this.y, this.z);
+    equals(v) {
+        if (v instanceof vec2) {
+            return this.x === v.x && this.y === v.y && this.z === v.z;
+        }
+        return false;
     }
-
-    set assign(v) {
+    toArray() {
+        return [this.x, this.y];
+    }
+    clone() {
+        return new vec3(this);
+    }
+    assign(v) {
         if (v instanceof vec3) {
             this.x = v.x;
             this.y = v.y;
-            this.z = v.z;
         }
+        return this;
     }
 }

@@ -162,7 +162,7 @@ export class vec2 {
     static mix(v1, v2, t) {
         return v1.mix(v2, t);
     }
-    direction() {
+    get direction() {
         if (this.isZero) {
             return undefined;
         }
@@ -288,7 +288,7 @@ export class vec2 {
 
     equals(v) {
         if (v instanceof vec2) {
-            return this.x === v.x && this.y === v.y && this.z === v.z;
+            return this.x === v.x && this.y === v.y;
         }
         return false;
     }
@@ -297,13 +297,16 @@ export class vec2 {
         return [this.x, this.y];
     }
 
-    get clone() {
-        return new vec2(this.x, this.y);
+    clone() {
+        return new vec2(this);
     }
-    set assign(v) {
+    assign(v) {
         if (v instanceof vec2) {
             this.x = v.x;
             this.y = v.y;
         }
+        return this;
     }
+
+
 }

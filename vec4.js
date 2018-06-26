@@ -45,7 +45,7 @@ export class vec4 {
             this.y = x.y;
             if (y instanceof vec2) {
                 this.z = y.x;
-                this.w = y.w;
+                this.w = y.y;
             } else if (validY && validZ) {
                 this.z = y;
                 this.w = z;
@@ -70,15 +70,14 @@ export class vec4 {
         }
     }
 
-    get clone() {
-        return new vec4(this.x, this.y, this.z, this.w);
+    clone() {
+        return new vec4(this);
     }
-    set assign(v) {
+    assign(v) {
         if (v instanceof vec4) {
             this.x = v.x;
             this.y = v.y;
-            this.z = v.z;
-            this.w = v.w;
         }
+        return this;
     }
 }
