@@ -1,0 +1,17 @@
+{
+  "name": "vector",
+  "version": "1.0.0",
+  "description": "vector is a vector math library for JS/ES6",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "lxsmnsyc <alexis.munsayac@gmail.com>",
+  "license": "MIT"
+}
