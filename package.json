@@ -5,13 +5,24 @@
   "main": "main.js",
   "dependencies": {},
   "devDependencies": {
-    "esdoc": "^1.1.0",
-    "esdoc-standard-plugin": "^1.0.0"
+    "mocha": "^5.2.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "lxsmnsyc <alexis.munsayac@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "example": "examples",
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LXSMNSYC/vector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LXSMNSYC/vector/issues"
+  },
+  "homepage": "https://github.com/LXSMNSYC/vector#readme"
 }
